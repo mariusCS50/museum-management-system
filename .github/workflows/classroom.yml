@@ -1,0 +1,102 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Basic Museums Load 01
+      id: basic-museums-load-01
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Basic Museums Load 01
+        setup-command: ''
+        command: gradle test --tests MainTest.basicMuseumsLoad01
+        timeout: 10
+        max-score: 5
+    - name: Errored Museums Load 02
+      id: errored-museums-load-02
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Errored Museums Load 02
+        setup-command: ''
+        command: gradle test --tests MainTest.erroredMuseumsLoad02
+        timeout: 10
+        max-score: 5
+    - name: Basic Groups Load 03
+      id: basic-groups-load-03
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Basic Groups Load 03
+        setup-command: ''
+        command: gradle test --tests MainTest.basicGroupsLoad03
+        timeout: 10
+        max-score: 5
+    - name: Errored Group Guide 04
+      id: errored-group-guide-04
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Errored Group Guide 04
+        setup-command: ''
+        command: gradle test --tests MainTest.erroredGroupGuide04
+        timeout: 10
+        max-score: 5
+    - name: Errored Group Members 05
+      id: errored-group-members-05
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Errored Group Members 05
+        setup-command: ''
+        command: gradle test --tests MainTest.erroredGroupMembers05
+        timeout: 10
+        max-score: 5
+    - name: Find Groups 06
+      id: find-groups-06
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Find Groups 06
+        setup-command: ''
+        command: radle test --tests MainTest.findGroups06
+        timeout: 10
+        max-score: 5
+    - name: Museum Notificator 07
+      id: museum-notificator-07
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Museum Notificator 07
+        setup-command: ''
+        command: gradle test --tests MainTest.museumNotificator07
+        timeout: 10
+        max-score: 5
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        BASIC-MUSEUMS-LOAD-01_RESULTS: "${{steps.basic-museums-load-01.outputs.result}}"
+        ERRORED-MUSEUMS-LOAD-02_RESULTS: "${{steps.errored-museums-load-02.outputs.result}}"
+        BASIC-GROUPS-LOAD-03_RESULTS: "${{steps.basic-groups-load-03.outputs.result}}"
+        ERRORED-GROUP-GUIDE-04_RESULTS: "${{steps.errored-group-guide-04.outputs.result}}"
+        ERRORED-GROUP-MEMBERS-05_RESULTS: "${{steps.errored-group-members-05.outputs.result}}"
+        FIND-GROUPS-06_RESULTS: "${{steps.find-groups-06.outputs.result}}"
+        MUSEUM-NOTIFICATOR-07_RESULTS: "${{steps.museum-notificator-07.outputs.result}}"
+      with:
+        runners: basic-museums-load-01,errored-museums-load-02,basic-groups-load-03,errored-group-guide-04,errored-group-members-05,find-groups-06,museum-notificator-07
+    - name: Upload Problems Report
+      if: failure() # This step runs only if the previous step fails
+      uses: actions/upload-artifact@v4
+      with:
+        name: problems-report
+        path: build/reports/problems/problems-report.html
+    - name: Upload Test Reports
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-reports
+        path: build/reports/tests/test
