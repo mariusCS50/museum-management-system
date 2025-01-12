@@ -64,7 +64,7 @@ jobs:
       with:
         test-name: Find Groups 06
         setup-command: ''
-        command: radle test --tests MainTest.findGroups06
+        command: gradle test --tests MainTest.findGroups06
         timeout: 10
         max-score: 5
     - name: Museum Notificator 07
