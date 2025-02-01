@@ -1,4 +1,4 @@
-package org.example;
+package org.example.locations;
 
 public class Location {
     private String county;

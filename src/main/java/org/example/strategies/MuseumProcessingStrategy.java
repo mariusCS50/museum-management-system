@@ -1,4 +1,9 @@
-package org.example;
+package org.example.strategies;
+
+import org.example.locations.Location;
+import org.example.locations.Museum;
+import org.example.entities.PersonFactory;
+import org.example.database.Database;
 
 import java.io.*;
 import java.util.*;

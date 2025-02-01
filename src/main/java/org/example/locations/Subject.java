@@ -1,4 +1,6 @@
-package org.example;
+package org.example.locations;
+
+import org.example.entities.Observer;
 
 import java.io.PrintWriter;
 

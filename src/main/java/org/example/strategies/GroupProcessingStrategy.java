@@ -1,4 +1,9 @@
-package org.example;
+package org.example.strategies;
+
+import org.example.database.Database;
+import org.example.entities.*;
+import org.example.exceptions.*;
+import org.example.locations.Museum;
 
 import java.io.*;
 import java.util.*;
@@ -29,7 +34,8 @@ public class GroupProcessingStrategy implements FileProcessingStrategy {
                     case "REMOVE MEMBER" : writer.println(removeMember(params));
                         break;
                 }
-            } catch (GuideExistsException | GuideTypeException | GroupNotExistsException | GroupThresholdException | PersonNotExistsException e) {
+            } catch (GuideExistsException | GuideTypeException | GroupNotExistsException | GroupThresholdException |
+                     PersonNotExistsException e) {
                 writer.println(e.getMessage());
             }
         }

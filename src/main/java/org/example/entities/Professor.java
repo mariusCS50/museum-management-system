@@ -1,8 +1,8 @@
-package org.example;
+package org.example.entities;
 
 import java.io.PrintWriter;
 
-public class Professor extends Person implements Observer{
+public class Professor extends Person implements Observer {
     private int experience;
     private String school;
 

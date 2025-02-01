@@ -1,4 +1,7 @@
-package org.example;
+package org.example.locations;
+
+import org.example.entities.Observer;
+import org.example.entities.Person;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;

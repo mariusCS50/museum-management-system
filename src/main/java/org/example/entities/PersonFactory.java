@@ -1,4 +1,4 @@
-package org.example;
+package org.example.entities;
 
 public class PersonFactory {
     public static Person createPerson(String surname, String name, String role) {

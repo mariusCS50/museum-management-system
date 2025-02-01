@@ -1,6 +1,9 @@
-package org.example;
+package org.example.database;
 
-import java.util.Collection;
+import org.example.entities.Group;
+import org.example.entities.GroupKey;
+import org.example.locations.Museum;
+
 import java.util.HashMap;
 
 public class Database {
