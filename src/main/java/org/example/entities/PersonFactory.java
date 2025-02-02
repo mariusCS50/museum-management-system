@@ -14,23 +14,33 @@ public class PersonFactory {
         String school = (params[6].isEmpty()) ? null : params[6];
         int studyYearOrExperience = Integer.parseInt(params[7]);
 
-        switch (params[3]) {
-            case "student":
-                Student student =  new Student(surname, name, role);
-                student.setAge(age);
-                student.setEmail(email);
-                student.setSchool(school);
-                student.setStudyYear(studyYearOrExperience);
-                return student;
-            case "profesor":
-                Professor professor = new Professor(surname, name, role);
-                professor.setAge(age);
-                professor.setEmail(email);
-                professor.setSchool(school);
-                professor.setExperience(studyYearOrExperience);
-                return professor;
-            default:
-                return new Person(surname, name, role);
+        if (role.equals("ghid")) {
+            Guide guide = new Guide(surname, name, role);
+            guide.setAge(age);
+            guide.setEmail(email);
+            guide.setSchool(school);
+            guide.setExperience(studyYearOrExperience);
+            return guide;
         }
+
+        if (params[3].equals("student")) {
+            Student student = new Student(surname, name, role);
+            student.setAge(age);
+            student.setEmail(email);
+            student.setSchool(school);
+            student.setStudyYear(studyYearOrExperience);
+            return student;
+        }
+
+        if (params[3].equals("profesor")) {
+            Professor professor = new Professor(surname, name, role);
+            professor.setAge(age);
+            professor.setEmail(email);
+            professor.setSchool(school);
+            professor.setExperience(studyYearOrExperience);
+            return professor;
+        }
+
+        return new Person(surname, name, role);
     }
 }

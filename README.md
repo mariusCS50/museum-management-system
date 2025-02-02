@@ -6,7 +6,7 @@ Acest proiect simulează un sistem de gestionare a muzeelor în care muzeele pot
 
 ## Descrierea funcționalității
 
-## Cum funcționează codul
+### Cum funcționează codul
 
 Codul din `Main` începe prin a goli instanța singleton (`Database`) pentru a asigura că nu rămân date din testele precedente (se strică testele între ele dacă nu este curățat database-ul).
 
@@ -16,6 +16,23 @@ Odată ce strategia este selectată, metoda `processFile` este apelată cu argum
 
 Fiecare implementare a strategiei (de exemplu, `MuseumProcessingStrategy`, `GroupProcessingStrategy`, `EventProcessingStrategy`) citește fișierul de intrare corespunzător, parsează comenzile sau datele și efectuează operațiunile necesare (`ListenerProcessingStrategy` este mai mult ca un wrapper, el execută toate celelalte 3 strategii).
 
+## Funcționalități Adiționale
+
+### Clasa Guide
+
+Clasa `Guide` extinde clasa `Professor` și implementează interfața `Observer`. Acest lucru permite ghizilor să primească notificări despre evenimentele de la muzeele cu care sunt asociați. Când are loc un eveniment, metoda `update` este apelată, trimițând un mesaj la email-ul ghidului.
+
+### Eroare pentru Muzee Inexistente
+
+Am adăugat o eroare pentru cazul în care un muzeu este neccesar pentru execuția unei comenzi, dar nu există în baza de date.
+
+### Recenzii
+
+Clasa `Review` reprezintă o recenzie lăsată de un utilizator pentru un muzeu, conținând două atribute principale: `score`, un întreg care reprezintă rating-ul dat de utilizator, și `message` - feedback-ul utilizatorului.
+
+Metoda `addReview` permite utilizatorilor să lase o recenzie cu un scor și un mesaj, care este apoi stocată în colecția de recenzii a muzeului. În schimb, metoda `removeReview` permite utilizatorilor să își șteargă recenziile.
+
+Parametrii comenzilor pentru recenzii sunt foarte asemănători cu cei pentru comenzi normale de grup. Singura diferență la comanda ADD REVIEW este că valoare din câmpul "Interval orar" este acum un rating de la 0 la 5 și mai există un parametru adițional pentru mesajul din review. La comanda REMOVE REVIEW, parametrii sunt identici cu cei ai din headerul fisierului group, în afară de ultimul care nu este necesar, este necesar doar până la codul muzeului.
 ## Design Pattern-uri Utilizate
 
 ### Observer

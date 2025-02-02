@@ -1,6 +1,6 @@
 package org.example;
 
-import org.example.database.Database;
+import org.example.information.Database;
 import org.example.strategies.FileProcessingStrategy;
 import org.example.strategies.GroupProcessingStrategy;
 import org.example.strategies.ListenerProcessingStrategy;

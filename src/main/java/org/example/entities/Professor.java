@@ -1,8 +1,6 @@
 package org.example.entities;
 
-import java.io.PrintWriter;
-
-public class Professor extends Person implements Observer {
+public class Professor extends Person {
     private int experience;
     private String school;
 
@@ -21,10 +19,5 @@ public class Professor extends Person implements Observer {
     @Override
     public String toString() {
         return super.toString() + ", school=" + school + ", experience=" + experience;
-    }
-
-    @Override
-    public void update(PrintWriter writer, String message) {
-        writer.println("To: " + this.getEmail() + " ## Message: " + message);
     }
 }

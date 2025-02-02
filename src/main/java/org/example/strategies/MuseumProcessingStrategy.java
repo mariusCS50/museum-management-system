@@ -1,9 +1,10 @@
 package org.example.strategies;
 
+import org.example.exceptions.MuseumNotExistsException;
 import org.example.locations.Location;
 import org.example.locations.Museum;
 import org.example.entities.PersonFactory;
-import org.example.database.Database;
+import org.example.information.Database;
 
 import java.io.*;
 import java.util.*;
@@ -21,15 +22,35 @@ public class MuseumProcessingStrategy implements FileProcessingStrategy {
             String line = scanner.nextLine();
             String[] params = line.split("\\|");
             try {
-                Location location = buildLocation(params);
-                Museum museum = buildMuseum(params, location);
-                database.addMuseum(museum);
-                writer.println(museum.getCode() + ": " + museum.getName());
+                switch (params[0]) {
+                    case "ADD MUSEUM" : writer.println(addMuseum(params));
+                        break;
+                    case "REMOVE MUSEUM" : writer.println(removeMuseum(params));
+                        break;
+                }
             } catch (IndexOutOfBoundsException | NumberFormatException | NullPointerException e) {
                 writer.println("Exception: Data is broken. ## (" + line + ")");
+            } catch (MuseumNotExistsException e) {
+                writer.println(e.getMessage());
             }
         }
         writer.close();
+    }
+
+    public String addMuseum(String[] params) {
+        Location location = buildLocation(params);
+        Museum museum = buildMuseum(params, location);
+        database.addMuseum(museum);
+        return museum.getCode() + ": " + museum.getName();
+    }
+
+    public String removeMuseum(String[] params) {
+        Museum museum = database.getMuseums().get(Long.parseLong(params[1]));
+        if (museum == null) {
+            throw new MuseumNotExistsException(params[1]);
+        }
+        database.removeMuseum(museum);
+        return museum.getCode() + ": " + museum.getName() + "has been removed.";
     }
 
     public Location buildLocation(String[] params) {

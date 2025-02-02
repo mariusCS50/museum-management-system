@@ -15,6 +15,14 @@ public class Person {
         this.role = role;
     }
 
+    public String getSurname() {
+        return surname;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     public void setAge(int age) {
         this.age = age;
     }

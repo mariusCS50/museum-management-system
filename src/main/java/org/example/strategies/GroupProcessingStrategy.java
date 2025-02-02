@@ -1,8 +1,9 @@
 package org.example.strategies;
 
-import org.example.database.Database;
+import org.example.information.Database;
 import org.example.entities.*;
 import org.example.exceptions.*;
+import org.example.information.Review;
 import org.example.locations.Museum;
 
 import java.io.*;
@@ -33,6 +34,10 @@ public class GroupProcessingStrategy implements FileProcessingStrategy {
                         break;
                     case "REMOVE MEMBER" : writer.println(removeMember(params));
                         break;
+                    case "ADD REVIEW" : writer.println(addReview(params));
+                        break;
+                    case "REMOVE REVIEW" : writer.println(removeReview(params));
+                        break;
                 }
             } catch (GuideExistsException | GuideTypeException | GroupNotExistsException | GroupThresholdException |
                      PersonNotExistsException e) {
@@ -61,9 +66,9 @@ public class GroupProcessingStrategy implements FileProcessingStrategy {
             throw new GuideExistsException(params[9], params[10], group.getGuide().toString());
         }
 
-        group.setGuide((Professor) guide);
+        group.setGuide((Guide) guide);
         if (museum != null) {
-            museum.addObserver((Professor) guide);
+            museum.addObserver((Guide) guide);
         }
         return params[9] + " ## " + params[10] + " ## " + "new guide: " + guide.toString();
     }
@@ -99,7 +104,7 @@ public class GroupProcessingStrategy implements FileProcessingStrategy {
 
         group.resetGuide();
         if (museum != null) {
-            museum.removeObserver((Professor) guide);
+            museum.removeObserver((Guide) guide);
         }
 
         return params[9] + " ## " + params[10] + " ## " + "removed guide: " + guide.toString();
@@ -155,5 +160,30 @@ public class GroupProcessingStrategy implements FileProcessingStrategy {
 
         group.removeMember(member);
         return params[9] + " ## " + params[10] + " ## " + "removed member: " + member.toString();
+    }
+
+    public String addReview(String[] params) throws MuseumNotExistsException {
+        Museum museum = database.getMuseums().get(Long.parseLong(params[1]));
+        if (museum == null) {
+            throw new MuseumNotExistsException(params[9]);
+        }
+
+        Person person = PersonFactory.createPerson(params);
+        Review review = new Review(Integer.parseInt(params[10]), params[11]);
+        museum.getReviews().put(person, review);
+
+        return person.getSurname() + " " + person.getName() + " left a " + review.getScore() + " star review: " + review.getMessage();
+    }
+
+    public String removeReview(String[] params) throws MuseumNotExistsException {
+        Museum museum = database.getMuseums().get(Long.parseLong(params[1]));
+        if (museum == null) {
+            throw new MuseumNotExistsException(params[9]);
+        }
+
+        Person person = PersonFactory.createPerson(params);
+        museum.getReviews().remove(person);
+
+        return person.getSurname() + " " + person.getName() + " removed their review";
     }
 }

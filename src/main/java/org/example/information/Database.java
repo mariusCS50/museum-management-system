@@ -1,4 +1,4 @@
-package org.example.database;
+package org.example.information;
 
 import org.example.entities.Group;
 import org.example.entities.GroupKey;
@@ -50,5 +50,9 @@ public class Database {
 
     public HashMap<GroupKey, Group> getGroups() {
         return groups;
+    }
+
+    public void removeMuseum(Museum museum) {
+        museums.remove(museum.getCode());
     }
 }

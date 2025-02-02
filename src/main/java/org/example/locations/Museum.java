@@ -2,9 +2,11 @@ package org.example.locations;
 
 import org.example.entities.Observer;
 import org.example.entities.Person;
+import org.example.information.Review;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Museum implements Subject{
@@ -19,6 +21,7 @@ public class Museum implements Subject{
     private String email;
     private String url;
     private String profile;
+    private HashMap<Person, Review> reviews = new HashMap<>();
     private List<Observer> guides = new ArrayList<>();
 
     private Museum(Builder builder) {
@@ -118,5 +121,9 @@ public class Museum implements Subject{
 
     public String getName() {
         return name;
+    }
+
+    public HashMap<Person, Review> getReviews() {
+        return reviews;
     }
 }
