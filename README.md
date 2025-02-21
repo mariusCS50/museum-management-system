@@ -1,54 +1,80 @@
-# Proiect: Aplicație turistică
+# Museum Management System
+This project simulates a museum management and tourism system. It handles data about museums, guides, visitor groups, events, and reviews. The application processes input files, manages a central database of entities, and demonstrates several design patterns.
 
-## Prezentare generală
+## Overview
 
-Acest proiect simulează un sistem de gestionare a muzeelor în care muzeele pot notifica ghizii înregistrați despre evenimente. Sistemul este conceput pentru a gestiona datele despre muzee, grupuri de vizitatori și evenimente.
+The application is structured as a Java project built with Gradle. It is organized into the following components:
 
-## Descrierea funcționalității
+- **Input Processing:**
+  The main entry point ([`Main.java`](src/main/java/org/example/Main.java)) selects a file processing strategy based on the first command-line argument. Strategies include processing museums, groups, and combined events & listener notifications.
 
-### Cum funcționează codul
+- **File Processing Strategies:**
+  Specific classes implement the [`FileProcessingStrategy`](src/main/java/org/example/strategies/FileProcessingStrategy.java) interface to process different types of data:
+  - [`MuseumProcessingStrategy`](src/main/java/org/example/strategies/MuseumProcessingStrategy.java) processes museum records.
+  - [`GroupProcessingStrategy`](src/main/java/org/example/strategies/GroupProcessingStrategy.java) manages guide and member operations in groups.
+  - [`EventProcessingStrategy`](src/main/java/org/example/strategies/EventProcessingStrategy.java) handles event notifications.
+  - [`ListenerProcessingStrategy`](src/main/java/org/example/strategies/ListenerProcessingStrategy.java) composes the above strategies for full system execution.
 
-Codul din `Main` începe prin a goli instanța singleton (`Database`) pentru a asigura că nu rămân date din testele precedente (se strică testele între ele dacă nu este curățat database-ul).
+- **Entities and Domain Classes:**
+  The project defines various entities—such as [`Museum`](src/main/java/org/example/locations/Museum.java), [`Group`](src/main/java/org/example/entities/Group.java), [`Guide`](src/main/java/org/example/entities/Guide.java), and [`Person`](src/main/java/org/example/entities/Person.java)—and uses a central singleton database ([`Database`](src/main/java/org/example/information/Database.java)) for data management.
 
-Apoi, se selectează strategia de procesare a fișierelor corespunzătoare pe baza primului argument (`museums`, `groups` sau `listener`).
+- **Exceptions:**
+  Custom exceptions ([`GroupThresholdException`](src/main/java/org/example/exceptions/GroupThresholdException.java), [`GroupNotExistsException`](src/main/java/org/example/exceptions/GroupNotExistsException.java), etc.) are thrown when business rules are violated (e.g. adding too many members or an invalid guide).
 
-Odată ce strategia este selectată, metoda `processFile` este apelată cu argumentele rămase, care reprezintă căile către fișierele ce trebuie procesate.
+## Features
 
-Fiecare implementare a strategiei (de exemplu, `MuseumProcessingStrategy`, `GroupProcessingStrategy`, `EventProcessingStrategy`) citește fișierul de intrare corespunzător, parsează comenzile sau datele și efectuează operațiunile necesare (`ListenerProcessingStrategy` este mai mult ca un wrapper, el execută toate celelalte 3 strategii).
+- **Museum Management:**
+  Ability to add and remove museums while preserving valid location and contact data from input files.
 
-## Funcționalități Adiționale
+- **Group Operations:**
+  Adding or removing guides and group members with proper exception handling for threshold and type errors.
+  The system supports operations such as:
+  - Adding a guide, with checks to ensure only professors can be set as guides.
+  - Adding and removing members with a limit of 10 per group.
+  - Handling review submissions and removals according to specified parameters.
 
-### Clasa Guide
+- **Event Notifications:**
+  When a museum event occurs, the system notifies all associated guides (observers), with a printed summary of messages directed to each guide’s email address.
 
-Clasa `Guide` extinde clasa `Professor` și implementează interfața `Observer`. Acest lucru permite ghizilor să primească notificări despre evenimentele de la muzeele cu care sunt asociați. Când are loc un eveniment, metoda `update` este apelată, trimițând un mesaj la email-ul ghidului.
+- **Design Patterns:**
+  The project demonstrates the use of several design patterns:
+  - **Singleton:** The [`Database`](src/main/java/org/example/information/Database.java) class ensures a single instance across the application.
+  - **Observer:** Museums notify guides about events (see [`Subject`](src/main/java/org/example/locations/Subject.java) and [`Observer`](src/main/java/org/example/entities/Observer.java)).
+  - **Factory:** The [`PersonFactory`](src/main/java/org/example/entities/PersonFactory.java) is used for creating different types of person objects.
+  - **Builder:** Used in building complex objects like [`Location`](src/main/java/org/example/locations/Location.java) and [`Museum`](src/main/java/org/example/locations/Museum.java).
+  - **Strategy:** Different file processing strategies are implemented to decouple the execution flow depending on the input type.
 
-### Eroare pentru Muzee Inexistente
+## Running the Project
 
-Am adăugat o eroare pentru cazul în care un muzeu este neccesar pentru execuția unei comenzi, dar nu există în baza de date.
+### Build and Test
 
-### Recenzii
+This project uses Gradle. To compile and run tests, use the following commands in your project root:
 
-Clasa `Review` reprezintă o recenzie lăsată de un utilizator pentru un muzeu, conținând două atribute principale: `score`, un întreg care reprezintă rating-ul dat de utilizator, și `message` - feedback-ul utilizatorului.
+```sh
+./gradlew build
+./gradlew test
+```
 
-Metoda `addReview` permite utilizatorilor să lase o recenzie cu un scor și un mesaj, care este apoi stocată în colecția de recenzii a muzeului. În schimb, metoda `removeReview` permite utilizatorilor să își șteargă recenziile.
+### Execution
 
-Parametrii comenzilor pentru recenzii sunt foarte asemănători cu cei pentru comenzi normale de grup. Singura diferență la comanda ADD REVIEW este că valoare din câmpul "Interval orar" este acum un rating de la 0 la 5 și mai există un parametru adițional pentru mesajul din review. La comanda REMOVE REVIEW, parametrii sunt identici cu cei ai din headerul fisierului group, în afară de ultimul care nu este necesar, este necesar doar până la codul muzeului.
-## Design Pattern-uri Utilizate
+The application is run by specifying the type of data to process followed by the input file path. For example, to process museum data:
 
-### Observer
+```sh
+./gradlew run --args="museums src/main/resources/01-basic-museums-load/museums_01"
+```
 
-Pentru a implementa notificarea ghizilor despre evenimentele din muzee, am ales să folosesc design pattern-ul Observer. Acesta mi-a permis să stabilesc o relație între muzee și ghizi, astfel încât, atunci când un muzeu adaugă un eveniment, toți ghizii care sunt parte din grupurile turistice asociate muzeului sunt notificați automat. Muzeele acționează ca subiecte care gestionează o listă de observatori (ghizii) și îi notifică atunci când apar evenimente noi.
+Similarly, for groups:
 
-### Singleton
+```sh
+./gradlew run --args="groups src/main/resources/03-basic-groups/groups_01"
+```
 
-Am ales să folosesc design pattern-ul Singleton pentru clasa Database, deoarece trebuie să existe o singură instanță a bazei de date pe întreaga aplicație. Singleton asigură că există o instanță unică și că accesul la această instanță este controlat, evitând instanțierea multiplă a obiectului.
+And to run full listener processing (which integrates museums, groups, and events):
 
-### Factory
+```sh
+./gradlew run --args="listener src/main/resources/07-museum-listener/museums_03 src/main/resources/07-museum-listener/groups_05 src/main/resources/07-museum-listener/events_01"
+```
 
-Am utilizat pattern-ul Factory Method pentru a crea obiecte de tipuri diferite de persoane, cum ar fi studenți și profesori, în cadrul grupurilor turistice. Acesta mi-a permis să decuplez crearea instanțelor de tipuri concrete de Person de restul aplicației, având astfel o metodă centralizată pentru crearea obiectelor.
-### Builder
+## Testing
 
-Am folosit Builder pentru a crea obiectele Museum și Location, având în vedere că acestea au multe atribute opționale care pot face constructorii lor complexi. Utilizarea unui Builder mi-a permis să creez obiectele într-un mod clar și ușor de citit, fără a fi nevoit să gestionăm constructori cu mulți parametri sau să avem multe combinații de valori implicite.
-### Strategy
-
-Am ales să folosesc design pattern-ul Strategy pentru a separa logica de procesare a fișierelor în funcție de tipul acestora (museum, group, listener). În funcție de primul argument al metodei main(), sunt create diferite strategii pentru procesarea fișierelor (MuseumProcessingStrategy, GroupProcessingStrategy, ListenerProcessingStrategy). Astfel, fiecare strategie se ocupă de logica specifică pentru procesarea unui tip de fișier, iar prin utilizarea acestui pattern am obținut un cod mai flexibil și ușor de extins.
+The integrated tests in [`MainTest.java`](src/test/java/MainTest.java ) compare the generated output files (with a `.out` extension) to corresponding reference files (with a `.ref` extension). These tests validate that museum, group, and event processing work exactly as required.
